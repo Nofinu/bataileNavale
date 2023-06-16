@@ -27,13 +27,11 @@ public class JeuServiceTest {
     @Test
     void generationBoatOnGrille (){
         JeuService jeuService = new JeuService(tirage);
-        Mockito.when(tirage.tirageRnd(0,50)).thenReturn(1);
-
-        Mockito.when(tirage.tirageRnd(50,100)).thenReturn(51);
+        Mockito.when(tirage.tirageRnd()).thenReturn(1);
 
         jeuService.initGrille();
         jeuService.initBoat();
-        Case cases = new Case(0,0);
+        Case cases = new Case(1,2);
         cases.setBoat(true);
         List<Case> plateu = jeuService.getPlateau();
         Assertions.assertTrue(jeuService.getPlateau().contains(cases));
@@ -43,24 +41,111 @@ public class JeuServiceTest {
     @Test
     void verifShootHitABoat (){
         JeuService jeuService = new JeuService(tirage);
-        Mockito.when(tirage.tirageRnd(0,50)).thenReturn(1);
-
-        Mockito.when(tirage.tirageRnd(50,100)).thenReturn(51);
+        Mockito.when(tirage.tirageRnd()).thenReturn(1);
 
         jeuService.initGrille();
         jeuService.initBoat();
-        Assertions.assertTrue(jeuService.Verifshoot(1,2));
+        Assertions.assertTrue(jeuService.verifshoot(1,2));
     }
 
     @Test
     void verifShootNotHitABoat (){
         JeuService jeuService = new JeuService(tirage);
-        Mockito.when(tirage.tirageRnd(0,50)).thenReturn(1);
-
-        Mockito.when(tirage.tirageRnd(50,100)).thenReturn(51);
+        Mockito.when(tirage.tirageRnd()).thenReturn(1);
 
         jeuService.initGrille();
         jeuService.initBoat();
-        Assertions.assertFalse(jeuService.Verifshoot(1,3));
+        Assertions.assertFalse(jeuService.verifshoot(1,3));
+    }
+
+    @Test
+    void ShoothitABoatAndSink (){
+        JeuService jeuService = new JeuService(tirage);
+        Mockito.when(tirage.tirageRnd()).thenReturn(1);
+
+        jeuService.initGrille();
+        jeuService.initBoat();
+        jeuService.shoot(1,2,1);
+        Assertions.assertTrue(jeuService.getPlateau().get(1).isSink());
+    }
+    @Test
+    void ShoothitABoatAndIsDiscoverd(){
+        JeuService jeuService = new JeuService(tirage);
+        Mockito.when(tirage.tirageRnd()).thenReturn(1);
+
+        jeuService.initGrille();
+        jeuService.initBoat();
+        jeuService.shoot(1,2,1);
+        Assertions.assertTrue(jeuService.getPlateau().get(1).isDiscover());
+    }
+
+    @Test
+    void ShootNotHitABoat (){
+        JeuService jeuService = new JeuService(tirage);
+        Mockito.when(tirage.tirageRnd()).thenReturn(1);
+
+        jeuService.initGrille();
+        jeuService.initBoat();
+        jeuService.shoot(1,3,1);
+        Assertions.assertFalse(jeuService.getPlateau().get(1).isSink());
+    }
+
+    @Test
+    void ShootNotHitABoatAndIsDiscoverd (){
+        JeuService jeuService = new JeuService(tirage);
+        Mockito.when(tirage.tirageRnd()).thenReturn(1);
+
+        jeuService.initGrille();
+        jeuService.initBoat();
+        jeuService.shoot(1,3,1);
+        Assertions.assertFalse(jeuService.getPlateau().get(1).isDiscover());
+    }
+
+    @Test
+    void ShootOnPlayer1BoatAndDecreaseThisBoat (){
+        JeuService jeuService = new JeuService(tirage);
+        Mockito.when(tirage.tirageRnd()).thenReturn(1);
+
+        jeuService.initGrille();
+        jeuService.initBoat();
+        jeuService.shoot(1,2,1);
+        Assertions.assertEquals(14,jeuService.getBoatPlayer1());
+    }
+
+    @Test
+    void ShootOnPlayer2BoatAndDecreaseThisBoat (){
+        JeuService jeuService = new JeuService(tirage);
+        Mockito.when(tirage.tirageRnd()).thenReturn(1);
+
+        jeuService.initGrille();
+        jeuService.initBoat();
+        jeuService.shoot(1,2,2);
+        Assertions.assertEquals(14,jeuService.getBoatPlayer2());
+    }
+
+    @Test
+    void WinPlayer2 (){
+        JeuService jeuService = new JeuService(tirage);
+
+        jeuService.initGrille();
+        jeuService.setBoatPlayer1(0);
+        Assertions.assertEquals(2,jeuService.verifWin());
+    }
+
+    @Test
+    void WinPlayer1 (){
+        JeuService jeuService = new JeuService(tirage);
+
+        jeuService.initGrille();
+        jeuService.setBoatPlayer2(0);
+        Assertions.assertEquals(1,jeuService.verifWin());
+    }
+
+    @Test
+    void testWinnerNoWinner (){
+        JeuService jeuService = new JeuService(tirage);
+
+        jeuService.initGrille();
+        Assertions.assertEquals(0,jeuService.verifWin());
     }
 }
