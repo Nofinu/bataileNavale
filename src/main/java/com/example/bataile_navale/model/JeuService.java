@@ -10,14 +10,12 @@ import java.util.Random;
 public class JeuService {
     private List<Case> plateau = new ArrayList<>();
     private boolean boatPlaced;
-    private Random random;
     private Tirage _tirageCase;
     private int idCaseFind;
     private int boatPlayer1;
     private int boatPlayer2;
 
     public JeuService(Tirage tirage) {
-        random = new Random();
         boatPlaced = false;
         _tirageCase = tirage;
         boatPlayer1 = 15;

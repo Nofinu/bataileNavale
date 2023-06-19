@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet(name = "gameServlet",value = "/game")
@@ -25,9 +26,22 @@ public class JeuServlet extends HttpServlet {
        player1Turn = true;
     }
     public void doGet (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<Case> plateau = jeuService.getPlateau();
-        request.setAttribute("plateau",plateau);
-        request.getRequestDispatcher(Definition.PATH_VIEW+"GameBoard.jsp").forward(request,response);
+        if(request.getParameter("type")== null){
+            List<Case> plateau = jeuService.getPlateau();
+            request.setAttribute("plateau",plateau);
+            request.setAttribute("turn",1);
+            request.getRequestDispatcher(Definition.PATH_VIEW+"GameBoard.jsp").forward(request,response);
+        }else {
+            jeuService.setPlateau(new ArrayList<>());
+            jeuService.initGrille();
+            jeuService.initBoat();
+            player1Turn = true;
+            List<Case> plateau = jeuService.getPlateau();
+            request.setAttribute("winner",false);
+            request.setAttribute("plateau",plateau);
+            request.setAttribute("turn",1);
+            request.getRequestDispatcher(Definition.PATH_VIEW+"GameBoard.jsp").forward(request,response);
+        }
     }
 
     public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -47,6 +61,7 @@ public class JeuServlet extends HttpServlet {
                 jeuService.shoot(x,y,player);
                 if(jeuService.verifWin() != 0){
                     request.setAttribute("winner",jeuService.verifWin());
+                    request.setAttribute("turn",player);
                 }
             }
             List<Case> plateau = jeuService.getPlateau();
